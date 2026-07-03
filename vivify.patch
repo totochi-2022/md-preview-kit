@@ -39,3 +39,27 @@ index e38d1ad..6dd284b 100644
      } catch (error) {
          console.log(error);
          completeStartup();
+diff --git a/src/parser/highlight.ts b/src/parser/highlight.ts
+index e0c7eca..6696e5a 100644
+--- a/src/parser/highlight.ts
++++ b/src/parser/highlight.ts
+@@ -2,13 +2,16 @@ import hljs from 'highlight.js';
+ 
+ export default function highlight(str: string, lang: string) {
+     let content = str;
+-    if (!hljs.getLanguage(lang)) lang = 'plaintext';
++    // 未知言語(wavedrom/chart 等)はハイライトは plaintext に落とすが、class には
++    // 元の言語名を残す。カスタムスクリプト(scripts)がフェンス種別を検出できるように。
++    const displayLang = lang || 'plaintext';
++    const hlLang = hljs.getLanguage(lang) ? lang : 'plaintext';
+     try {
+         content = hljs.highlight(content, {
+-            language: lang,
++            language: hlLang,
+             ignoreIllegals: true,
+         }).value;
+     } catch {}
+ 
+-    return `<pre class="language-${lang}"><code>${content}</code></pre>`;
++    return `<pre class="language-${displayLang}"><code>${content}</code></pre>`;
+ }

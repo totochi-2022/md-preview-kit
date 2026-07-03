@@ -35,8 +35,8 @@ VDIR="$(ghq list --full-path | grep -iE 'jannis-baum/Vivify$' | head -1)"
 cd "$VDIR"
 
 echo "[3/5] パッチ適用(冪等: 一旦戻してから当てる)"
-git checkout -- src/app.ts 2>/dev/null || true
-git apply "$HERE/app.ts.patch"
+git checkout -- src/app.ts src/parser/highlight.ts 2>/dev/null || true
+git apply "$HERE/vivify.patch"
 
 echo "[4/5] ビルド & install (webpack+SEA で数分)"
 yarn install

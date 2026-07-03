@@ -5,8 +5,17 @@ md をレポート化する計画（グラフ/回路図/タイミング図）の
 
 ## ファイル
 - `install.sh` … 上流 clone → パッチ → SEA ビルド → `~/.local/bin` 導入 → config symlink
-- `app.ts.patch` … 起動時 `/health` プローブに 500ms タイムアウトを足すパッチ
-- `config.json` … Vivify 設定。`~/.config/vivify/config.json` はこれへの symlink
+- `vivify.patch` … 上流への2点パッチ:
+  - `src/app.ts`: 起動時 `/health` プローブに 500ms タイムアウト(mirrored 対策)
+  - `src/parser/highlight.ts`: 未知言語フェンスの class に元言語名を残す
+    (`<pre class="language-wavedrom">` 等。glue が種別検出できるように)
+- `config.json` … Vivify 設定(browserOptions/timeout/scripts)。`~/.config/vivify/config.json` はこれへの symlink
+- `scripts/` … `config.json` の `scripts` で読み込む描画グルー一式:
+  - `wavedrom.min.js` + `wavedrom-skin-default.js`(vendored)
+  - `chart.umd.js`(vendored)
+  - `glue.js` … `pre.language-wavedrom`/`pre.language-chart` を WaveDrom/Chart で描画。
+    `MutationObserver` で ws 更新にも追従
+- `sample.md` … 動作確認用デモ（`,,V` で開く）
 
 ## 新マシンでの導入
 ```sh
