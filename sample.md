@@ -92,6 +92,24 @@ digraph G {
 
 ---
 
+## 3c. 回路図（schemdraw / :DiagramRender）
+
+schemdraw は Python なのでブラウザでライブ描画できない。下のフェンス内にカーソルを置いて
+**`:DiagramRender`** すると、SVG 化して `![](assets/xxx.svg)` に置換される（元ソースは SVG の
+`<metadata>` に同伴）。後で `![]` 行で **`:DiagramEdit`** すればソースを復元して編集→`:w` で再生成。
+案A（`d` / `elm` はスコープ済）で書く:
+
+```schemdraw
+d += elm.Resistor().label('R1')
+d += elm.Capacitor().label('C1').down()
+d += elm.Ground()
+d += elm.SourceV().up().label('V1')
+```
+
+（このフェンスは `,,V` では素のコード表示。`:DiagramRender` 実行後に画像になる。）
+
+---
+
 ## 4. 数式（KaTeX・標準）
 
 インライン $E = mc^2$、ブロック:

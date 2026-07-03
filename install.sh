@@ -47,9 +47,18 @@ rm -f build/static.zip build/linux/vivify-server
 make linux
 make install
 
-echo "[5/5] config 設置 (~/.config/vivify/config.json → 本ディレクトリ)"
+echo "[5/6] config 設置 (~/.config/vivify/config.json → 本ディレクトリ)"
 mkdir -p "$HOME/.config/vivify"
 ln -sf "$HERE/config.json" "$HOME/.config/vivify/config.json"
+
+echo "[6/6] schemdraw 導入 (:DiagramRender 回路図レンダラ。SVGバックエンドで matplotlib 不要)"
+if command -v python3 >/dev/null; then
+    python3 -c "import schemdraw" 2>/dev/null && echo "  既に導入済み" \
+        || python3 -m pip install --quiet schemdraw && echo "  schemdraw 導入" \
+        || echo "  △ schemdraw 導入失敗（回路図を使うなら手動で pip install schemdraw）"
+else
+    echo "  △ python3 が無いので schemdraw スキップ（回路図を使う時に導入）"
+fi
 
 echo "--- 起動確認 ---"
 "$BIN_DIR/vivify-server" >/dev/null 2>&1 &
