@@ -1,0 +1,41 @@
+diff --git a/src/app.ts b/src/app.ts
+index e38d1ad..6dd284b 100644
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -43,14 +43,32 @@ export const { clientsAt, messageClients, openAndMessage } = setupSockets(
+ const openTargetsAndCompleteStartup = handleArgs();
+ if (openTargetsAndCompleteStartup) {
+     try {
+-        get(`${address}/health`, async () => {
++        let settled = false;
++        let probeTimer: ReturnType<typeof setTimeout>;
++        const startServer = () => {
++            if (settled) return;
++            settled = true;
++            clearTimeout(probeTimer);
++            // server is not running so we start it
++            server.listen(config.port, openTargetsAndCompleteStartup);
++        };
++        const req = get(`${address}/health`, async () => {
+             // server is already running
++            if (settled) return;
++            settled = true;
++            clearTimeout(probeTimer);
+             await openTargetsAndCompleteStartup();
+             process.exit(0);
+-        }).on('error', () => {
+-            // server is not running so we start it
+-            server.listen(config.port, openTargetsAndCompleteStartup);
+         });
++        req.on('error', startServer);
++        // WSL mirrored networking: connecting to an unbound port hangs instead
++        // of refusing with ECONNREFUSED, so the /health probe never fires
++        // 'error' and the server is never started. Fall through to starting
++        // our own server after a short timeout.
++        probeTimer = setTimeout(() => {
++            req.destroy();
++            startServer();
++        }, 500);
+     } catch (error) {
+         console.log(error);
+         completeStartup();
