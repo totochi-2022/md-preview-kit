@@ -75,6 +75,23 @@ graph LR
 
 ---
 
+## 3b. Graphviz / dot（標準）
+
+```dot
+digraph G {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+  入力 -> 判定;
+  判定 -> 処理1 [label="yes"];
+  判定 -> 処理2 [label="no"];
+  処理1 -> 出力;
+  処理2 -> 出力;
+  判定 [shape=diamond];
+}
+```
+
+---
+
 ## 4. 数式（KaTeX・標準）
 
 インライン $E = mc^2$、ブロック:
