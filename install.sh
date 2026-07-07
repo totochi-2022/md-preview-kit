@@ -54,9 +54,10 @@ ln -sf "$HERE/config.json" "$HOME/.config/vivify/config.json"
 echo "[6/6] figure studio 依存"
 # 図生成: schemdraw / matplotlib（Python→SVG）
 if command -v python3 >/dev/null; then
-    python3 -m pip install --quiet streamlit schemdraw matplotlib pillow rdkit molecule-resolver \
-        && echo "  py: streamlit/schemdraw/matplotlib/pillow/rdkit/molecule-resolver OK" \
-        || echo "  △ py 失敗。手動: pip install streamlit schemdraw matplotlib pillow rdkit molecule-resolver"
+    python3 -m pip install --quiet streamlit schemdraw matplotlib pillow rdkit \
+        && echo "  py: streamlit/schemdraw/matplotlib/pillow/rdkit OK" \
+        || echo "  △ py 失敗。手動: pip install streamlit schemdraw matplotlib pillow rdkit"
+    # SMILES 検索は PubChem PUG-REST(公式・キー不要)を urllib で直叩き=追加依存なし
 else
     echo "  △ python3 が無いので図依存スキップ（python 用意後に pip install）"
 fi
