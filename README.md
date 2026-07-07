@@ -21,6 +21,7 @@ md をレポート化する計画（グラフ/回路図/タイミング図）の
 - `render/studio.py` … Streamlit 製 figure studio。**左=vim(ttyd の nvim)/右=ライブSVG(白ボックス)**、
   上部ツールバー(テンプレ挿入/📋SVGコピー)。`?svg=&py=&ttyd=&sock=` を受け取り、左に ttyd(nvim)を
   iframe で、右は `st.fragment(run_every="1s")` で SVG を読み直して表示(`:w` で更新・端末は再描画しない)。
+  生成エラー時(=`<py>.err` が在る)は画像も📋コピーも出さずエラーだけ表示(古い画像を残さない)。
   テンプレ挿入は `?py=` を書き換え **nvim RPC(`--remote-expr 'execute("edit! | write")'`)** でリロード
   (tmux send-keys は noice の cmdline ポップアップにキーを取りこぼすため不可)。
 - `sample.md` … 動作確認用デモ（`,,V` で開く）
