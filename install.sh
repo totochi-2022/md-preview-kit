@@ -54,9 +54,9 @@ ln -sf "$HERE/config.json" "$HOME/.config/vivify/config.json"
 echo "[6/6] figure studio 依存"
 # 図生成: schemdraw / matplotlib（Python→SVG）
 if command -v python3 >/dev/null; then
-    python3 -m pip install --quiet schemdraw matplotlib \
-        && echo "  py: schemdraw/matplotlib OK" \
-        || echo "  △ py 失敗。手動: pip install schemdraw matplotlib"
+    python3 -m pip install --quiet streamlit schemdraw matplotlib \
+        && echo "  py: streamlit/schemdraw/matplotlib OK" \
+        || echo "  △ py 失敗。手動: pip install streamlit schemdraw matplotlib"
 else
     echo "  △ python3 が無いので図依存スキップ（python 用意後に pip install）"
 fi
