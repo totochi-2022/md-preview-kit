@@ -18,9 +18,11 @@ md をレポート化する計画（グラフ/回路図/タイミング図）の
 - `render/render_schemdraw.py` … `render(source)`: Python スニペット→SVG化。namespace に `out`(SVGパス)
   を渡し、ソースが `out` に SVG を書けば何でも可(schemdraw/matplotlib/pygal/drawsvg…)。元ソースを
   `<metadata id="diagram-source" data-type="python">` に埋込(draw.io 方式 round-trip)。CLI/import 両用。
-- `render/studio.py` … Streamlit 製 figure studio。**左=vim(ttyd の nvim)/右=ライブSVG(Vivify)**、
-  上部ツールバー(テンプレ挿入/📋SVGコピー)。`?svg=&py=&ttyd=` を受け取り、左に ttyd(nvim)を、
-  右に Vivify を iframe で並べる。テンプレ挿入は `?py=` を書き換え tmux で nvim をリロード。
+- `render/studio.py` … Streamlit 製 figure studio。**左=vim(ttyd の nvim)/右=ライブSVG(白ボックス)**、
+  上部ツールバー(テンプレ挿入/📋SVGコピー)。`?svg=&py=&ttyd=&sock=` を受け取り、左に ttyd(nvim)を
+  iframe で、右は `st.fragment(run_every="1s")` で SVG を読み直して表示(`:w` で更新・端末は再描画しない)。
+  テンプレ挿入は `?py=` を書き換え **nvim RPC(`--remote-expr 'execute("edit! | write")'`)** でリロード
+  (tmux send-keys は noice の cmdline ポップアップにキーを取りこぼすため不可)。
 - `sample.md` … 動作確認用デモ（`,,V` で開く）
 
 ## 新マシンでの導入
