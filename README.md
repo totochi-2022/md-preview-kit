@@ -15,6 +15,9 @@ md をレポート化する計画（グラフ/回路図/タイミング図）の
   - `chart.umd.js`(vendored)
   - `glue.js` … `pre.language-wavedrom`/`pre.language-chart` を WaveDrom/Chart で描画。
     `MutationObserver` で ws 更新にも追従
+  - `ladder.glue.js` … `pre.language-kvlist`(KVニーモニック)をラダー図SVGに描画＋
+    ホバーで同一デバイスをクロスリファレンスハイライト。**生成物なので直接編集しない**
+    (ソースは `~/work/ladder_viewer/ladder-core.mjs`、再生成は `sh ~/work/ladder_viewer/vivify-glue.sh`)
 - `render/render_schemdraw.py` … Python スニペット→画像化。namespace に `out`(出力パス)を渡し、
   ソースが `out` に保存すれば何でも可。**出力拡張子で形式判定(svg/png/jpg)**。元ソースを埋込:
   SVG=`<metadata>` / PNG=tEXt チャンク / JPEG=COM コメント(draw.io 方式 round-trip)。

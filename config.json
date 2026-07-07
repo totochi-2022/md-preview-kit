@@ -5,6 +5,7 @@
     "~/.config/nvim/vivify/scripts/wavedrom.min.js",
     "~/.config/nvim/vivify/scripts/wavedrom-skin-default.js",
     "~/.config/nvim/vivify/scripts/chart.umd.js",
-    "~/.config/nvim/vivify/scripts/glue.js"
+    "~/.config/nvim/vivify/scripts/glue.js",
+    "~/.config/nvim/vivify/scripts/ladder.glue.js"
   ]
 }
