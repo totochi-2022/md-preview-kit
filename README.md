@@ -16,8 +16,11 @@ md をレポート化する計画（グラフ/回路図/タイミング図）の
   - `glue.js` … `pre.language-wavedrom`/`pre.language-chart` を WaveDrom/Chart で描画。
     `MutationObserver` で ws 更新にも追従
   - `ladder.glue.js` … `pre.language-kvlist`(KVニーモニック)をラダー図SVGに描画＋
-    ホバーで同一デバイスをクロスリファレンスハイライト。**生成物なので直接編集しない**
-    (ソースは `~/work/ladder_viewer/ladder-core.mjs`、再生成は `sh ~/work/ladder_viewer/vivify-glue.sh`)
+    ホバーで同一デバイスをクロスリファレンスハイライト。**生成物・git管理外**。
+    lazy の `totochi-2022/ladder_viewer` (plugins/misc.lua) の build フックが
+    `vivify-glue.sh` で生成する(`:Lazy update` / `:Lazy build ladder_viewer` で再生成＋
+    vivify-server kill、次の `,,V` で反映)。dev モードにつき `~/work/ladder_viewer` が
+    あればそれがソース、無いマシンでは GitHub から clone される
 - `render/render_schemdraw.py` … Python スニペット→画像化。namespace に `out`(出力パス)を渡し、
   ソースが `out` に保存すれば何でも可。**出力拡張子で形式判定(svg/png/jpg)**。元ソースを埋込:
   SVG=`<metadata>` / PNG=tEXt チャンク / JPEG=COM コメント(draw.io 方式 round-trip)。
