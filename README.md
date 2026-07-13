@@ -39,6 +39,18 @@ bash ~/.config/nvim/vivify/install.sh
 ```
 前提: `node`(mise), `ghq`, passwordless sudo(zip 用)。figure studio 用に pip(streamlit / streamlit-ace / schemdraw / matplotlib)も導入。
 
+### ブラウザ起動には wslu 4.x が必須（WSL の地雷）
+`config.json` の `browserOptions: { "name": "wslview" }` で既定ブラウザを開く。ところが
+**Ubuntu 24.04 の apt 版 wslu(3.2.3) は systemd 版 WSL の binfmt を旧名 `WSLInterop` でしか探さず、
+新名 `WSLInterop-late` を認識できないため「WSL Interopability is disabled」でブラウザを開けない**
+（`viv`/`vivify-server` は起動するのにタブが出ない、という症状になる）。
+→ **PPA の wslu 4.x** を使う（`WSLInterop-late` 対応）:
+```sh
+sudo add-apt-repository -y ppa:wslutilities/wslu && sudo apt-get update && sudo apt-get install -y wslu
+wslview --version   # v4.x なら OK（`grep: ...WSLInterop: No such file` の警告は無害）
+```
+install.sh に組み込み済み。経緯: howm 日記 `2026-07-13`。
+
 ## なぜパッチが要るか（WSL mirrored 限定の地雷）
 `networkingMode=mirrored` の WSL2 では**未使用ポートへの接続が ECONNREFUSED を返さずハング**する。
 Vivify は起動時 `http.get(localhost:31622/health)` で既存サーバを調べ「error なら自分が listen」する
