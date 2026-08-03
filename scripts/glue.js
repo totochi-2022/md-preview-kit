@@ -14,10 +14,16 @@
     }
 
     function showError(pre, kind, e) {
+        var msg = (e && e.message ? e.message : String(e));
         var p = document.createElement('pre');
         p.style.color = '#e06c75';
         p.style.whiteSpace = 'pre-wrap';
-        p.textContent = kind + ' render error: ' + (e && e.message ? e.message : e);
+        p.textContent = kind + ' render error: ' + msg;
+        // pull 収集用の目印。nvim-server 側 :PreviewErrors が親→iframe の postMessage
+        // 越しに .viv-render-error を DOM 走査して拾う（後述 installErrorBridge）。
+        p.className = 'viv-render-error';
+        p.dataset.vivKind = kind;
+        p.dataset.vivMessage = msg;
         pre.replaceWith(p);
     }
 
@@ -84,6 +90,42 @@
             setTimeout(function () { pending = false; processAll(container); }, 0);
         }).observe(container, { childList: true, subtree: true });
     }
+
+    // 親(nvim-server client, 別オリジン :9998)からの pull 要求に応じて、今この瞬間の
+    // DOM からエラー / SVG を集めて返すブリッジ。iframe(:31622)とはクロスオリジンなので
+    // contentWindow 直読みはできず postMessage 経由になる。複数 glue が読まれても
+    // document 全体を走査する 1 個だけ設置すれば種別を網羅できる（idempotent）。
+    function installErrorBridge() {
+        if (window.__vivGlueBridge) return;
+        window.__vivGlueBridge = true;
+        window.addEventListener('message', function (ev) {
+            var d = ev.data;
+            if (!d || d.__nvimServer !== true || d.kind !== 'collect') return;
+            var reply = { __vivGlue: true, token: d.token, want: d.want };
+            if (d.want === 'svg') {
+                // 成功して描画された SVG のソース。wavedrom/kvlist は SVG、chart は
+                // canvas(ビットマップ)なのでここには載らない。
+                reply.svgs = [].slice.call(
+                    document.querySelectorAll('.viv-wavedrom svg, .viv-ladder svg')
+                ).map(function (el, i) { return { index: i, svg: el.outerHTML }; });
+            } else {
+                reply.errors = [].slice.call(
+                    document.querySelectorAll('.viv-render-error')
+                ).map(function (el, i) {
+                    return {
+                        index: i,
+                        kind: el.dataset.vivKind || '',
+                        message: el.dataset.vivMessage || el.textContent,
+                    };
+                });
+            }
+            try {
+                (ev.source || window.parent).postMessage(reply, ev.origin || '*');
+            } catch (_) { /* 送れなくても致命ではない */ }
+        });
+    }
+
+    installErrorBridge();
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run);
