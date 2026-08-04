@@ -100,7 +100,23 @@
         window.__vivGlueBridge = true;
         window.addEventListener('message', function (ev) {
             var d = ev.data;
-            if (!d || d.__nvimServer !== true || d.kind !== 'collect') return;
+            if (!d || d.__nvimServer !== true) return;
+            if (d.kind === 'eval') {
+                // :PreviewEval — 任意 JS を eval して結果を返す(親 client.js が token で待つ)
+                var er = { __vivGlue: true, token: d.token, want: 'eval' };
+                try {
+                    var v = (0, eval)(d.code);
+                    er.result = (typeof v === 'object' && v !== null)
+                        ? JSON.stringify(v) : String(v);
+                } catch (e) {
+                    er.error = String(e);
+                }
+                try {
+                    (ev.source || window.parent).postMessage(er, ev.origin || '*');
+                } catch (_) { /* 送れなくても致命ではない */ }
+                return;
+            }
+            if (d.kind !== 'collect') return;
             var reply = { __vivGlue: true, token: d.token, want: d.want };
             if (d.want === 'svg') {
                 // 成功して描画された SVG のソース。wavedrom/kvlist は SVG、chart は
