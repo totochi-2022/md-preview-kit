@@ -28,13 +28,47 @@
 ]}
 ```
 
-
+![](assets/20260707-212231.fig.svg)
 
 ---
 
 ## 2. グラフ（Chart.js）
 
-棒グラフ:
+
+```kvlist
+DEVICE:53
+;MODULE:bbbb
+;MODULE_TYPE:0
+;SCRIPT_TYPE:
+LD MR3013
+OUT MR2013
+;MR3012 = 1
+;MR3012 = 1
+LD MR3013
+AND MR3014
+SET MR1000
+NCJ #1000
+;MR3012 = 1
+LD CR2002
+OUT MR3012
+LABEL #1000
+;
+;MR3012 = 0
+;MR3012 = 0
+LD MR3013
+ANB MR3014
+SET MR1000
+NCJ #1001
+;MR3012 = 0
+LD CR2003
+OUT MR3012
+LABEL #1001
+;
+LD MR3014
+@SMOV "H:1" DM8000
+END
+ENDH
+```
 
 ```chart
 { type: "bar",
@@ -99,15 +133,13 @@ schemdraw は Python なのでブラウザでライブ描画できない。下�
 `<metadata>` に同伴）。後で `![]` 行で **`:DiagramEdit`** すればソースを復元して編集→`:w` で再生成。
 案A（`d` / `elm` はスコープ済）で書く:
 
-```schemdraw
-d += elm.Resistor().label('R1')
-d += elm.Capacitor().label('C1').down()
-d += elm.Ground()
-d += elm.SourceV().up().label('V1')
-```
 
 （このフェンスは `,,V` では素のコード表示。`:DiagramRender` 実行後に画像になる。）
+![](assets/schemdraw-1d0ad66d2a.svg)
 
+
+
+![](assets/20260706-165536.drawio.svg)
 ---
 
 ## 4. 数式（KaTeX・標準）
@@ -119,6 +151,11 @@ $$
 $$
 
 ---
+
+
+![](assets/20260707-180418.fig.svg)
+
+
 
 ## 5. Callout / リンク（標準）
 
@@ -139,4 +176,6 @@ howm 風リンク: [[2026-07-03-1657-chiikawa]]（クリックで遷移）
 ```
 
 ![](assets/20260703-171727.png)
+
+
 ↑ ここは "wavedrom render error: ..." と赤字で出れば正常（グルーの try/catch）。
