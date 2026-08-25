@@ -1,2 +1,5 @@
 assets/
 __pycache__/
+
+# ladder_viewer の build フック(vivify-glue.sh)が生成する。リポジトリでは持たない。
+scripts/ladder.glue.js
