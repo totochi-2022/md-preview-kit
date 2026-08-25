@@ -6,7 +6,10 @@
     "~/work/md-preview-kit/scripts/wavedrom.min.js",
     "~/work/md-preview-kit/scripts/wavedrom-skin-default.js",
     "~/work/md-preview-kit/scripts/chart.umd.js",
-    "~/work/md-preview-kit/scripts/glue.js",
-    "~/work/md-preview-kit/scripts/ladder.glue.js"
+    "~/work/md-preview-kit/scripts/core.js",
+    "~/work/md-preview-kit/scripts/renderers/wavedrom.js",
+    "~/work/md-preview-kit/scripts/renderers/chart.js",
+    "~/work/md-preview-kit/scripts/ladder.glue.js",
+    "~/work/md-preview-kit/adapters/vivify/shim.js"
   ]
 }
