@@ -2,6 +2,7 @@
   "browserOptions": { "name": "wslview" },
   "timeout": 0,
   "scripts": [
+    "~/work/md-preview-kit/scripts/json5.min.js",
     "~/work/md-preview-kit/scripts/wavedrom.min.js",
     "~/work/md-preview-kit/scripts/wavedrom-skin-default.js",
     "~/work/md-preview-kit/scripts/chart.umd.js",

@@ -7,10 +7,24 @@
     'use strict';
     var wdIndex = 0;
 
-    // WaveJSON / Chart config は JS オブジェクトリテラル(キー無引用符可)。
-    // ローカルプレビュー専用なので WaveDrom 本家同様 Function 評価で読む。
+    // WaveJSON / Chart config は JS オブジェクトリテラル(キー無引用符・シングル
+    // クォート・末尾カンマ可)なので、JSON5 で読む。
+    //
+    // ★ eval を使わないこと自体が要件。理由は2つ:
+    //   1. VS Code のプレビューは CSP が script-src 'nonce-...' で unsafe-eval が無く、
+    //      new Function / eval は動かない(拡張として配る以上ここが下限になる)。
+    //   2. フェンスの中身を評価する実装は任意コード実行になる。同種の実装で
+    //      実際に脆弱性報告が出ている(markdown-preview-enhanced #2315,
+    //      WaveDrom eval 経由の任意ファイル書き込み)。他人に md を配って
+    //      開かせる用途では許容できない。
+    //
+    // 制約: 関数を含む設定(Chart の callback 等)は書けない。CSP 下では原理的に
+    // 不可能なので、これは実装上の都合ではなく仕様。
     function parseObj(text) {
-        return new Function('return (' + text + ');')();
+        if (typeof JSON5 === 'undefined') {
+            throw new Error('JSON5 が読み込まれていない (scripts の順序を確認)');
+        }
+        return JSON5.parse(text);
     }
 
     function showError(pre, kind, e) {
