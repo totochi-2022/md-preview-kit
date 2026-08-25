@@ -14,13 +14,21 @@ media="$here/media"
 rm -rf "$media"
 mkdir -p "$media/renderers"
 
-# ladder.glue.js は未対応: 契約に載っておらず、自前の MutationObserver が
-# Vivify の #body-content に依存しているため VS Code では動かない。載せ替え後に追加する。
 for f in json5.min.js wavedrom.min.js wavedrom-skin-default.js chart.umd.js core.js; do
     cp "$root/scripts/$f" "$media/$f"
 done
 cp "$root/scripts/renderers/wavedrom.js" "$media/renderers/wavedrom.js"
 cp "$root/scripts/renderers/chart.js"    "$media/renderers/chart.js"
+
+# ladder.glue.js は ladder_viewer の生成物。previewScripts に常に載せてあるので、
+# 無い環境では VS Code が file-not-found を出さないよう no-op スタブを置く。
+# 生成するには: sh ~/work/ladder_viewer/vivify-glue.sh
+if [ -f "$root/scripts/ladder.glue.js" ]; then
+    cp "$root/scripts/ladder.glue.js" "$media/ladder.glue.js"
+else
+    echo "// ladder.glue.js 未生成 (sh ~/work/ladder_viewer/vivify-glue.sh)" > "$media/ladder.glue.js"
+    echo "  ! ladder.glue.js が無いのでスタブを置いた（ladder は無効）" >&2
+fi
 
 # sourcemap 参照を剥がす: webview の CSP は default-src \'none\' なので .map の取得が
 # ブロックされ、Console に無関係な警告が出続ける。配布物には不要。

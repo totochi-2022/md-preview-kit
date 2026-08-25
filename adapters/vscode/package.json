@@ -19,7 +19,8 @@
       "./media/chart.umd.js",
       "./media/core.js",
       "./media/renderers/wavedrom.js",
-      "./media/renderers/chart.js"
+      "./media/renderers/chart.js",
+      "./media/ladder.glue.js"
     ]
   }
 }
