@@ -1,0 +1,25 @@
+{
+  "name": "md-preview-kit",
+  "displayName": "md-preview-kit",
+  "description": "Markdown のコードフェンスを図として描画する (wavedrom / chart / ladder)",
+  "version": "0.0.1",
+  "publisher": "totochi-2022",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.63.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "markdown.previewScripts": [
+      "./media/json5.min.js",
+      "./media/wavedrom.min.js",
+      "./media/wavedrom-skin-default.js",
+      "./media/chart.umd.js",
+      "./media/core.js",
+      "./media/renderers/wavedrom.js",
+      "./media/renderers/chart.js"
+    ]
+  }
+}

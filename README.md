@@ -50,17 +50,33 @@ ln -sf ~/work/md-preview-kit/adapters/vivify/config.json ~/.config/vivify/config
 Vivify 本体（パッチ版のビルド手順を含む）は `nvim-config` の `vivify/` にある。
 フェンスの言語名を class に残すためのパーサパッチが要る（`<pre class="language-wavedrom">`）。
 
-### VS Code（予定）
+### VS Code
 
-`markdown.previewScripts` で `scripts/` を組み込みプレビューに差し込む。
-VS Code の markdown-it は最初から `language-*` class を吐くのでパッチは不要。
+組み込み Markdown プレビューに `markdown.previewScripts` で `scripts/` を差し込む拡張。
+ビルド不要（宣言だけの拡張）。
 
-VS Code 側の制約が設計の基準になる（厳しい方に合わせれば Vivify でも通るため）:
+```sh
+sh adapters/vscode/sync.sh            # scripts/ を media/ にコピー（生成物）
+cd adapters/vscode
+npx @vscode/vsce package --allow-missing-repository --skip-license
+code --install-extension md-preview-kit-*.vsix --force
+```
 
-- **CSP `script-src 'nonce-...'`** — `eval` / `new Function` は使えない。
+導入後、md を開いて Ctrl+Shift+V でプレビュー。ラダー（kvlist）はまだ未対応。
+
+VS Code 側の制約が設計の基準になっている（厳しい方に合わせれば Vivify でも通るため）:
+
+- **CSP `script-src 'nonce-...'`** — `eval` / `new Function` は使えない（→ JSON5 で回避）。
   レンダリング済み HTML への `<script>` 注入も不可（nonce を取得する手段が無い）
+- **`previewScripts` は非同期・順不同に読み込まれる** — レンダラは依存ライブラリを
+  `register(lang, fn, { needs: [...] })` で宣言し、core が揃うまで描画を遅らせる。
+  特に WaveDrom は WaveSkin 未読込だと例外を投げず空の図を描くため、この待ち合わせが要る。
 - **再描画は `vscode.markdown.updateContent` イベント**（VS Code 1.63 以降、
   プレビューが差分 DOM 更新になったため。スクリプトは初回に1度だけ初期化される）
+- **フェンスの class 位置がホストで違う**: VS Code は `<pre><code class="language-X">`、
+  Vivify は `<pre class="language-X">`。core が両方を拾う。
+- WSL のファイルを UNC 経由で開くと VS Code のファイル監視が効かず、保存してもプレビューが
+  自動更新されない（VS Code 側の既知の制約）。
 
 ## ライセンス
 
