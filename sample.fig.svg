@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="en" height="143.8pt" width="249.16399999999996pt" viewBox="-46.696 -139.2 249.16399999999996 143.8">
+<metadata id="diagram-source" data-type="python"><![CDATA[import schemdraw
+import schemdraw.elements as elm
+
+if out.endswith(".svg"):
+    schemdraw.use("svg")
+
+d = schemdraw.Drawing(show=False)
+V = elm.SourceSin().up().label("Vin")
+d += V
+d += elm.Resistor().right().label("R1 10k")
+node = elm.Dot()
+d += node
+d += elm.Capacitor().down().label("C1 100nF")
+d += elm.Line().left().tox(V.start)
+d += elm.Line().toy(V.start)
+d += elm.Line().right().at(node.center).length(1.5)
+d += elm.Dot(open=True).label("Vout", loc="right")
+d.save(out)
+]]></metadata>
+<circle cx="0" cy="-54" r="18" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;" /><path d="M 0.0,-0.0 L 0,-36 L 0,-36 M 0,-72 L 0,-72 L 0,-108" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 9.000000000000004,-54.0 L 8.25,-55.863 L 7.5,-57.6 L 6.75,-59.091 L 6,-60.235 L 5.25,-60.955 L 4.5,-61.2 L 3.75,-60.955 L 3,-60.235 L 2.25,-59.091 L 1.5,-57.6 L 0.75,-55.863 L 0,-54 L -0.75,-52.137 L -1.5,-50.4 L -2.25,-48.909 L -3,-47.765 L -3.75,-47.045 L -4.5,-46.8 L -5.25,-47.045 L -6,-47.765 L -6.75,-48.909 L -7.5,-50.4 L -8.25,-52.137 L -9,-54" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 6.613092715395707e-15,-108.0 L 36,-108 L 39,-117 L 45,-99 L 51,-117 L 57,-99 L 63,-117 L 69,-99 L 72,-108 L 108,-108" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 108.0,-108.0 L 108,-57.24 M 117,-57.24 L 99,-57.24 M 117,-50.76 L 99,-50.76 M 108,-50.76 L 108,-0" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 107.99999999999999,-0.0 L 54,-0 L 0,-0" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 0.0,-1.3226185430791412e-14 L 0,-0 L 0,-0" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><path d="M 108.0,-108.0 L 135,-108 L 162,-108" style="stroke:black;fill:none;stroke-width:2.0;stroke-dasharray:-;stroke-linecap:round;stroke-linejoin:round;" /><text x="-21.599999999999994" y="-68.0" dominant-baseline="central" fill="black" font-size="14.0" font-family="sans" text-anchor="end"><tspan x="-21.599999999999994" dy="14.0">Vin</tspan></text><text x="54.00000000000001" y="-134.60000000000002" dominant-baseline="ideographic" fill="black" font-size="14.0" font-family="sans" text-anchor="middle"><tspan x="54.00000000000001" dy="14.0">R1 10k</tspan></text><text x="95.39999999999999" y="-68.0" dominant-baseline="central" fill="black" font-size="14.0" font-family="sans" text-anchor="end"><tspan x="95.39999999999999" dy="14.0">C1 100nF</tspan></text><circle cx="108" cy="-108" r="2.7" style="stroke:black;fill:black;stroke-width:2.0;stroke-dasharray:-;" /><circle cx="162" cy="-108" r="2.7" style="stroke:black;fill:white;stroke-width:2.0;stroke-dasharray:-;" /><text x="168.29999999999998" y="-122.0" dominant-baseline="central" fill="black" font-size="14.0" font-family="sans" text-anchor="start"><tspan x="168.29999999999998" dy="14.0">Vout</tspan></text></svg>
