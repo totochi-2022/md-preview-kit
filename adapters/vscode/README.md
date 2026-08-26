@@ -27,4 +27,11 @@ md を開いて `Ctrl+Shift+V`（または `Ctrl+K` → `V` で横に並べて�
 - WSL 上のファイルを `\\wsl.localhost\...` で開くと、保存してもプレビューが自動更新
   されません（VS Code のファイル監視の制約）。Windows ローカルに置いてください。
 
+## 変更履歴
+
+| 版 | 変更 |
+|---|---|
+| 0.0.2 | 同梱の `install.bat` が VS Code を呼び出せずに失敗する不具合を修正。失敗時に手作業の手順を案内するようにした |
+| 0.0.1 | 初版（wavedrom / chart / kvlist） |
+
 MIT License / https://github.com/totochi-2022/md-preview-kit

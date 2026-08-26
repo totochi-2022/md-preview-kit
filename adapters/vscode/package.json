@@ -2,7 +2,7 @@
   "name": "md-preview-kit",
   "displayName": "md-preview-kit",
   "description": "Markdown のコードフェンスを図として描画する (wavedrom / chart / ladder)",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "totochi-2022",
   "license": "MIT",
   "engines": {
