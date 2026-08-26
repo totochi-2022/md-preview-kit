@@ -1,5 +1,7 @@
 # vsix に含めないもの（media/ は sync.sh の生成物だが同梱が必要なので除外しない）
 .vscodeignore
 sync.sh
+build.sh
+dist-files/**
 *.vsix
 **/*.map
