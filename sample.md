@@ -18,13 +18,13 @@
 | 書くもの | 書き方 | 表示できるか |
 |---|---|---|
 | 基本の Markdown | 標準記法（§1） | ✓ VS Code の標準機能 |
-| タイミング図 | ` ```wavedrom ` フェンス | ✓ **md-preview-kit** |
-| グラフ | ` ```chart ` フェンス | ✓ **md-preview-kit** |
-| ラダー図（KV ニーモニック） | ` ```kvlist ` フェンス | ✓ **md-preview-kit** |
-| フローチャート・シーケンス図など | ` ```mermaid ` フェンス | 追加の拡張が必要（§14） |
-| 作図（draw.io） | `![](図.drawio.svg)` | ✓ 画像として表示（編集は追加の拡張） |
-| 回路図（schemdraw） | `![](図.fig.svg)` | ✓ 画像として表示 |
-| 数式 | `$...$` / `$$...$$` | ✓ VS Code の標準機能 |
+| フローチャート・シーケンス図など | ` ```mermaid ` フェンス（§11） | 追加の拡張が必要 |
+| グラフ | ` ```chart ` フェンス（§12） | ✓ **md-preview-kit** |
+| 作図（draw.io） | `![](図.drawio.svg)`（§13） | ✓ 画像として表示（編集は追加の拡張） |
+| ラダー図（KV ニーモニック） | ` ```kvlist ` フェンス（§14） | ✓ **md-preview-kit** |
+| 回路図（schemdraw） | `![](図.fig.svg)`（§15） | ✓ 画像として表示 |
+| タイミング図 | ` ```wavedrom ` フェンス（§16） | ✓ **md-preview-kit** |
+| 数式 | `$...$` / `$$...$$`（§9） | ✓ VS Code の標準機能 |
 
 - 図の描画はすべて**プレビューの中の JavaScript** で走る。サーバも変換コマンドも
   要らないので、オフラインでも動く。
@@ -179,62 +179,63 @@ md には HTML を直接書ける（`<br>` `<kbd>` `<details>` など）。
 
 ---
 
-# 第2部: 図を描く（md-preview-kit の本体）
+# 第2部: 図を入れる
 
-コードブロックの言語名に `wavedrom` / `chart` / `kvlist` を指定すると、
-中身を**図として描画**する。**中身は設定データ（JSON5）**で、プログラムではない。
+図の入れ方は2通りある。**どちらも md に書くだけ**で、変換作業は要らない。
 
-## 11. タイミング図（`wavedrom`）
+| 方式 | 書き方 | 向くもの |
+|---|---|---|
+| **フェンスに書く** | コードブロックの言語名に `mermaid` / `chart` / `kvlist` / `wavedrom` を指定 | 文字で書ける図。md の中で完結し、書き換えれば即反映される |
+| **画像として貼る** | `![](図.drawio.svg)` のように SVG を貼る | 作図ツールで描いた図・回路図。普通の画像として扱われるので確実に出る |
+
+フェンスに書く場合、**中身は設定データ（JSON5）**であってプログラムではない（§19）。
+
+## 11. フローチャート・シーケンス図（`mermaid` フェンス）
 
 ````markdown
-```wavedrom
-{ signal: [
-  { name: "clk", wave: "p......." }
-]}
+```mermaid
+flowchart LR
+    A[開始] --> B[終了]
 ```
 ````
 
-と書くと:
+のように、**コードブロックの言語名に図の種類を書く**と、中身が図として描かれる。
+これが第2部で共通の書き方（`mermaid` を `chart` や `wavedrom` に変えれば別の図になる）。
 
-```wavedrom
-{ signal: [
-  { name: "clk",  wave: "p......." },
-  { name: "req",  wave: "0.1..0.." },
-  { name: "ack",  wave: "0..1..0." },
-  { name: "data", wave: "x.=.=.x.", data: ["D0", "D1"] }
-],
-  head: { text: "handshake" }
-}
+`mermaid` は md-preview-kit ではなく、**VS Code の追加拡張が描画する**。
+
+拡張 **Markdown Preview Mermaid Support** を入れると描けるようになる
+（`install.bat` で「関連する拡張も入れますか？」に `y` と答えた場合は既に入っている）。
+
+```mermaid
+flowchart LR
+    A[md を書く] --> B{図が要る?}
+    B -- いいえ --> E[そのまま読む]
+    B -- はい --> C[フェンスに書く]
+    C --> D[プレビューで図になる]
+    D --> E
 ```
 
-`wave` の1文字が1クロック。主な文字:
-
-| 文字 | 意味 |
-|---|---|
-| `p` / `n` | クロック（立ち上がり／立ち下がり） |
-| `0` / `1` | Low / High で固定 |
-| `.` | 直前の状態を継続 |
-| `x` | 不定 |
-| `=` | データ（`data:` の文字列を順に入れる） |
-| `2` `3` `4`… | 色違いのデータ |
-
-バス・グループ・区切りの例（`{}` だけの行は空きスペース）:
-
-```wavedrom
-{ signal: [
-  { name: "clk", wave: "P........" },
-  {},
-  { name: "bus", wave: "x.==.=x..", data: ["addr", "data", "data"] },
-  { name: "we",  wave: "0.1...0.." }
-]}
+```mermaid
+sequenceDiagram
+    participant U as 作業者
+    participant E as エディタ
+    participant P as プレビュー
+    U->>E: md を保存
+    E->>P: 更新を通知
+    P->>P: フェンスを図に描画
+    P-->>U: 図が更新される
 ```
 
-> 📖 **WaveDrom のドキュメント**
-> ・[チュートリアル（`wave` の文字・記法の全体像）](https://wavedrom.com/tutorial.html)
-> ・[WaveJSON の仕様（signal / head / config などのキー一覧）](https://github.com/wavedrom/wavedrom/wiki/WaveJSON)
-> ・[本家サイトのエディタ（書いてすぐ試せる）](https://wavedrom.com/)
+上の2つが図になっていなければ、mermaid が有効になっていない
+（VS Code なら上記の拡張を入れる）。
 
-## 12. グラフ（`chart`）
+> 📖 **mermaid のドキュメント**
+> ・[記法（フローチャート・シーケンス図・ガント・ER 図など）](https://mermaid.js.org/syntax/flowchart.html)
+> ・[ドキュメント全体](https://mermaid.js.org/intro/)
+> ・VS Code 拡張: [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid)
+
+## 12. グラフ（`chart` フェンス）
 
 Chart.js の設定をそのまま書く（`type` と `data` が必須）。
 
@@ -287,7 +288,22 @@ Chart.js の設定をそのまま書く（`type` と `data` が必須）。
 > ・[ドキュメント全体](https://www.chartjs.org/docs/latest/)
 > ※ サンプル中に関数（`callback: ...`）が出てきたら、それはここでは使えません（§19）
 
-## 13. ラダー図（`kvlist`）
+## 13. 作図ツールの図（`.drawio.svg` を貼る）
+
+`.drawio.svg` は**普通の SVG 画像**なので、`![](...)` で貼るだけで表示される。
+draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ再編集もできる**
+（同じファイルを VS Code の Draw.io Integration 拡張／デスクトップ版 draw.io の
+どちらでも開ける）。
+
+![](sample.drawio.svg)
+
+> 📖 **draw.io**
+> ・[ブラウザ版（インストール不要でここで作図できる）](https://app.diagrams.net/)
+> ・[本家サイト（デスクトップ版のダウンロード・使い方）](https://www.drawio.com/)
+> ・VS Code 拡張: [Draw.io Integration](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio)
+> ※ 保存形式は **`.drawio.svg`**（「編集可能な SVG」）にすること。`.drawio` のままでは画像として貼れません
+
+## 14. ラダー図（`kvlist` フェンス）
 
 KV ニーモニック（キーエンス PLC のリスト形式）をラダー図として描画する。
 図中の**同じデバイスにマウスを乗せると、全出現箇所が相互にハイライトされる**。
@@ -329,64 +345,7 @@ ENDH
 
 > 📖 描画の実装とニーモニックの対応: [totochi-2022/ladder_viewer](https://github.com/totochi-2022/ladder_viewer)
 
-## 14. フローチャート・シーケンス図（`mermaid`）
-
-`mermaid` は md-preview-kit ではなく、**VS Code の追加拡張が描画する**。
-
-拡張 **Markdown Preview Mermaid Support** を入れると描けるようになる
-（`install.bat` で「関連する拡張も入れますか？」に `y` と答えた場合は既に入っている）。
-
-```mermaid
-flowchart LR
-    A[md を書く] --> B{図が要る?}
-    B -- いいえ --> E[そのまま読む]
-    B -- はい --> C[フェンスに書く]
-    C --> D[プレビューで図になる]
-    D --> E
-```
-
-```mermaid
-sequenceDiagram
-    participant U as 作業者
-    participant E as エディタ
-    participant P as プレビュー
-    U->>E: md を保存
-    E->>P: 更新を通知
-    P->>P: フェンスを図に描画
-    P-->>U: 図が更新される
-```
-
-上の2つが図になっていなければ、mermaid が有効になっていない
-（VS Code なら上記の拡張を入れる）。
-
-> 📖 **mermaid のドキュメント**
-> ・[記法（フローチャート・シーケンス図・ガント・ER 図など）](https://mermaid.js.org/syntax/flowchart.html)
-> ・[ドキュメント全体](https://mermaid.js.org/intro/)
-> ・VS Code 拡張: [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid)
-
----
-
-# 第3部: 図を画像として貼る
-
-フェンス描画とは別に、**SVG ファイルを画像として貼る**方法がある。
-プレビュー側は「ただの画像」として扱うので、**どのホストでも確実に表示される**。
-
-## 15. 作図ツールの図（draw.io）
-
-`.drawio.svg` は**普通の SVG 画像**なので `![](...)` で貼れば表示される（グルー不要）。
-draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ再編集もできる**
-（同じファイルを VS Code の Draw.io Integration 拡張／デスクトップ版 draw.io の
-どちらでも開ける）。
-
-![](sample.drawio.svg)
-
-> 📖 **draw.io**
-> ・[ブラウザ版（インストール不要でここで作図できる）](https://app.diagrams.net/)
-> ・[本家サイト（デスクトップ版のダウンロード・使い方）](https://www.drawio.com/)
-> ・VS Code 拡張: [Draw.io Integration](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio)
-> ※ 保存形式は **`.drawio.svg`**（「編集可能な SVG」）にすること。`.drawio` のままでは画像として貼れません
-
-## 16. 回路図（schemdraw）
+## 15. 回路図（`.fig.svg` を貼る）
 
 `.fig.svg` も同じくただの SVG 画像。こちらは Python（schemdraw）で描いたもので、
 **生成に使ったソースが SVG の中に埋め込まれている**ため、後から編集して再生成できる。
@@ -403,7 +362,57 @@ draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ�
 > ・[素子の一覧（抵抗・コンデンサ・IC・ロジックなど）](https://schemdraw.readthedocs.io/en/latest/elements/elements.html)
 > ・[ドキュメント全体](https://schemdraw.readthedocs.io/en/latest/)
 
-## 17. 画像全般の書き方
+## 16. タイミング図（`wavedrom` フェンス）
+
+````markdown
+```wavedrom
+{ signal: [
+  { name: "clk", wave: "p......." }
+]}
+```
+````
+
+と書くと:
+
+```wavedrom
+{ signal: [
+  { name: "clk",  wave: "p......." },
+  { name: "req",  wave: "0.1..0.." },
+  { name: "ack",  wave: "0..1..0." },
+  { name: "data", wave: "x.=.=.x.", data: ["D0", "D1"] }
+],
+  head: { text: "handshake" }
+}
+```
+
+`wave` の1文字が1クロック。主な文字:
+
+| 文字 | 意味 |
+|---|---|
+| `p` / `n` | クロック（立ち上がり／立ち下がり） |
+| `0` / `1` | Low / High で固定 |
+| `.` | 直前の状態を継続 |
+| `x` | 不定 |
+| `=` | データ（`data:` の文字列を順に入れる） |
+| `2` `3` `4`… | 色違いのデータ |
+
+バス・グループ・区切りの例（`{}` だけの行は空きスペース）:
+
+```wavedrom
+{ signal: [
+  { name: "clk", wave: "P........" },
+  {},
+  { name: "bus", wave: "x.==.=x..", data: ["addr", "data", "data"] },
+  { name: "we",  wave: "0.1...0.." }
+]}
+```
+
+> 📖 **WaveDrom のドキュメント**
+> ・[チュートリアル（`wave` の文字・記法の全体像）](https://wavedrom.com/tutorial.html)
+> ・[WaveJSON の仕様（signal / head / config などのキー一覧）](https://github.com/wavedrom/wavedrom/wiki/WaveJSON)
+> ・[本家サイトのエディタ（書いてすぐ試せる）](https://wavedrom.com/)
+
+## 17. 画像の書き方（共通）
 
 | 用途 | 書き方 |
 |---|---|
@@ -415,8 +424,7 @@ draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ�
 パスは**その md ファイルからの相対**。フォルダを移動するときは画像も一緒に運ぶ。
 
 ---
-
-# 第4部: 動作確認と制約
+# 第3部: 動作確認と制約
 
 ## 18. エラーの出方
 
@@ -435,7 +443,7 @@ draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ�
 |---|---|
 | フェンスの設定に**関数を書けない** | プレビューはコード評価を禁じている（CSP）。仕様 |
 | **プレビューがコードを実行することはない** | 配布される md を安全に開くための設計方針 |
-| mermaid は**ホスト任せ** | VS Code では別拡張が必要（§14） |
+| mermaid は**追加の拡張が必要** | md-preview-kit の担当外（§11） |
 | 画像の相対パスは**md ファイル基準** | md だけコピーすると画像が切れる |
 | VS Code で **WSL 上の md を `\\wsl.localhost\...` で開くと自動更新されない** | VS Code のファイル監視の制約。ローカル（`C:\`）に置けば問題ない |
 
@@ -446,12 +454,12 @@ draw.io は編集情報を SVG の中に埋め込むので、**表示しつつ�
 | 対象 | ドキュメント |
 |---|---|
 | Markdown 記法 | [入門](https://commonmark.org/help/tutorial/) / [早見表](https://commonmark.org/help/) / [GFM 仕様](https://github.github.com/gfm/) |
-| `wavedrom` | [チュートリアル](https://wavedrom.com/tutorial.html) / [WaveJSON 仕様](https://github.com/wavedrom/wavedrom/wiki/WaveJSON) / [オンラインエディタ](https://wavedrom.com/) |
-| `chart` | [グラフ種類](https://www.chartjs.org/docs/latest/charts/) / [設定項目](https://www.chartjs.org/docs/latest/general/options.html) / [サンプル集](https://www.chartjs.org/docs/latest/samples/) |
-| `kvlist` | [ladder_viewer](https://github.com/totochi-2022/ladder_viewer) |
 | `mermaid` | [記法](https://mermaid.js.org/syntax/flowchart.html) / [全体](https://mermaid.js.org/intro/) / [VS Code 拡張](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) |
+| `chart` | [グラフ種類](https://www.chartjs.org/docs/latest/charts/) / [設定項目](https://www.chartjs.org/docs/latest/general/options.html) / [サンプル集](https://www.chartjs.org/docs/latest/samples/) |
 | draw.io | [ブラウザ版](https://app.diagrams.net/) / [本家](https://www.drawio.com/) / [VS Code 拡張](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio) |
+| `kvlist` | [ladder_viewer](https://github.com/totochi-2022/ladder_viewer) |
 | 回路図(schemdraw) | [素子一覧](https://schemdraw.readthedocs.io/en/latest/elements/elements.html) / [全体](https://schemdraw.readthedocs.io/en/latest/) |
+| `wavedrom` | [チュートリアル](https://wavedrom.com/tutorial.html) / [WaveJSON 仕様](https://github.com/wavedrom/wavedrom/wiki/WaveJSON) / [オンラインエディタ](https://wavedrom.com/) |
 | 数式(KaTeX) | [使える関数の一覧](https://katex.org/docs/supported.html) |
 | フェンスの記法(JSON5) | [json5.org](https://json5.org/) |
 | この環境そのもの | [md-preview-kit](https://github.com/totochi-2022/md-preview-kit) / [VS Code の Markdown 機能](https://code.visualstudio.com/docs/languages/markdown) |
