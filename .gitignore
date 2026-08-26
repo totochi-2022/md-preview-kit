@@ -6,3 +6,8 @@ scripts/ladder.glue.js
 
 # 拡張の media/ は sync.sh が scripts/ からコピーする生成物
 adapters/vscode/media/
+
+# 拡張の配布物・生成物
+adapters/vscode/*.vsix
+adapters/vscode/LICENSE
+dist/
