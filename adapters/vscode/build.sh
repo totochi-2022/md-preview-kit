@@ -62,7 +62,10 @@ with zipfile.ZipFile(zip_path) as z:
         if not info.filename.isascii() and not (info.flag_bits & 0x800):
             sys.exit('UTF-8 フラグが立っていない: ' + info.filename)
 PYEOF
+# install.bat 単体も残す: すでに配った相手に bat だけ差し替えてもらう場合に使う。
+cp "$stage/install.bat" "$root/dist/install.bat"
 rm -rf "$stage"
 echo "4/4 $(basename "$zip") ($(du -h "$zip" | cut -f1))"
 echo
 echo "→ この zip を相手に渡す。解凍して install.bat をダブルクリックで入る。"
+echo "  bat だけ差し替えてもらう場合は dist/install.bat を渡す。"
