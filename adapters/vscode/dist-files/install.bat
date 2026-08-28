@@ -33,20 +33,23 @@ echo.
 call "%CODE%" --install-extension "%VSIX%" --force
 if errorlevel 1 goto failed
 
-rem --- 関連拡張（任意）-----------------------------------------
+rem --- 作図用の拡張（任意）-------------------------------------
+rem mermaid 用の拡張は入れない: VS Code 1.121 以降は mermaid が標準機能
+rem (組み込みの mermaid-markdown-features)なので、拡張を足すと二重になる。
 echo.
 echo ------------------------------------------------------------
-echo  関連する拡張も入れますか？
-echo    ・Markdown Preview Mermaid Support ... フローチャート等を表示
-echo    ・Draw.io Integration ............... VS Code の中で作図
+echo  作図用の拡張も入れますか？
+echo    ・Draw.io Integration ... VS Code の中で図を描ける
 echo  （後から入れることもできます）
+echo.
+echo  ※ mermaid（フローチャート）は VS Code 1.121 以降なら
+echo     拡張なしで表示されます。
 echo ------------------------------------------------------------
 set "ANS="
 set /p "ANS=入れる場合は y を入力して Enter [y/N]: "
 if /i "%ANS%"=="y" (
     echo.
-    echo 関連拡張をインストールします...
-    call "%CODE%" --install-extension bierner.markdown-mermaid --force
+    echo Draw.io Integration をインストールします...
     call "%CODE%" --install-extension hediet.vscode-drawio --force
 )
 

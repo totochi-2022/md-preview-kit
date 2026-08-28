@@ -18,7 +18,7 @@ md を開いて `Ctrl+Shift+V`（または `Ctrl+K` → `V` で横に並べて�
 
 | 拡張 | 何ができるか |
 |---|---|
-| Markdown Preview Mermaid Support | ` ```mermaid ` のフローチャート等を描画 |
+| Markdown Preview Mermaid Support | ` ```mermaid ` を描画。**VS Code 1.121 以降は標準機能なので不要** |
 | Draw.io Integration (hediet) | `.drawio.svg` を VS Code 内で作図・編集 |
 
 ## 制約
@@ -31,6 +31,7 @@ md を開いて `Ctrl+Shift+V`（または `Ctrl+K` → `V` で横に並べて�
 
 | 版 | 変更 |
 |---|---|
+| 0.0.3 | mermaid は VS Code 1.121 以降で標準機能になったため、`install.bat` での mermaid 拡張の導入を廃止（二重描画を避けるため）。関連する説明も更新 |
 | 0.0.2 | 同梱の `install.bat` が VS Code を呼び出せずに失敗する不具合を修正。失敗時に手作業の手順を案内するようにした |
 | 0.0.1 | 初版（wavedrom / chart / kvlist） |
 

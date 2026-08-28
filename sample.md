@@ -18,7 +18,7 @@
 | 書くもの | 書き方 | 表示できるか |
 |---|---|---|
 | 基本の Markdown | 標準記法（§1） | ✓ VS Code の標準機能 |
-| フローチャート・シーケンス図など | ` ```mermaid ` フェンス（§11） | 追加の拡張が必要 |
+| フローチャート・シーケンス図など | ` ```mermaid ` フェンス（§11） | ✓ VS Code 1.121 以降は標準機能 |
 | グラフ | ` ```chart ` フェンス（§12） | ✓ **md-preview-kit** |
 | 作図（draw.io） | `![](図.drawio.svg)`（§13） | ✓ 画像として表示（編集は追加の拡張） |
 | ラダー図（KV ニーモニック） | ` ```kvlist ` フェンス（§14） | ✓ **md-preview-kit** |
@@ -202,10 +202,9 @@ flowchart LR
 のように、**コードブロックの言語名に図の種類を書く**と、中身が図として描かれる。
 これが第2部で共通の書き方（`mermaid` を `chart` や `wavedrom` に変えれば別の図になる）。
 
-`mermaid` は md-preview-kit ではなく、**VS Code の追加拡張が描画する**。
-
-拡張 **Markdown Preview Mermaid Support** を入れると描けるようになる
-（`install.bat` で「関連する拡張も入れますか？」に `y` と答えた場合は既に入っている）。
+`mermaid` は md-preview-kit ではなく、**VS Code 自身が描画する**
+（1.121 以降で標準機能になった。それより古い VS Code では拡張
+**Markdown Preview Mermaid Support** を入れる）。
 
 ```mermaid
 flowchart LR
@@ -227,13 +226,13 @@ sequenceDiagram
     P-->>U: 図が更新される
 ```
 
-上の2つが図になっていなければ、mermaid が有効になっていない
-（VS Code なら上記の拡張を入れる）。
+上の2つが図になっていなければ、VS Code が古い可能性がある
+（`ヘルプ` → `バージョン情報` で確認。1.121 より前なら上記の拡張を入れる）。
 
 > 📖 **mermaid のドキュメント**
 > ・[記法（フローチャート・シーケンス図・ガント・ER 図など）](https://mermaid.js.org/syntax/flowchart.html)
 > ・[ドキュメント全体](https://mermaid.js.org/intro/)
-> ・VS Code 拡張: [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid)
+> ・古い VS Code(1.121 より前)用の拡張: [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid)
 
 ## 12. グラフ（`chart` フェンス）
 
@@ -443,7 +442,7 @@ ENDH
 |---|---|
 | フェンスの設定に**関数を書けない** | プレビューはコード評価を禁じている（CSP）。仕様 |
 | **プレビューがコードを実行することはない** | 配布される md を安全に開くための設計方針 |
-| mermaid は**追加の拡張が必要** | md-preview-kit の担当外（§11） |
+| mermaid は**VS Code 側の機能** | md-preview-kit の担当外。1.121 より古いと拡張が必要（§11） |
 | 画像の相対パスは**md ファイル基準** | md だけコピーすると画像が切れる |
 | VS Code で **WSL 上の md を `\\wsl.localhost\...` で開くと自動更新されない** | VS Code のファイル監視の制約。ローカル（`C:\`）に置けば問題ない |
 
